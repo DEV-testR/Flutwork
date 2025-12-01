@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import '../../../constants/color_constants.dart';
+import '../../../constants/style_constants.dart';
 import '../../../models/my_files.dart';
 import '../../../responsive.dart';
 import 'file_info_card.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/color_constants.dart';
+import '../../constants/style_constants.dart';
 import '../../responsive.dart';
 import 'components/header.dart';
 

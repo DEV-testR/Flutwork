@@ -8,7 +8,7 @@ import 'package:flutwork/services/secure_storage_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'constants/color_constants.dart';
+import 'constants/style_constants.dart';
 import 'controllers/menu_app_controller.dart';
 import 'screens/auth_check_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';

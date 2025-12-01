@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-import '../../../constants/color_constants.dart';
+import '../../../constants/style_constants.dart';
 import '../../../controllers/menu_app_controller.dart';
 import '../../../responsive.dart';
 
