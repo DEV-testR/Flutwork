@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutwork/constants/style_constants.dart';
 import 'package:flutwork/screens/sign_in_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart'; // Assuming this imports your logger
 import '../providers/auth_provider.dart';
-import 'dashboard/dashboard_screen.dart';
+import 'main/main_screen.dart';
 
 class PinSignInScreen extends StatefulWidget {
   final String email;
@@ -45,7 +46,7 @@ class _PinSignInScreenState extends State<PinSignInScreen> {
         );*/
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DashboardScreen()),
+          MaterialPageRoute(builder: (context) => MainScreen()),
         );
       } else {
         setState(() {
@@ -72,9 +73,9 @@ class _PinSignInScreenState extends State<PinSignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Overall white background
+      backgroundColor: bgColor, // Overall white background
       appBar: AppBar(
-        backgroundColor: Colors.white, // White AppBar background
+        backgroundColor: bgColor, // White AppBar background
         elevation: 0.5, // Subtle shadow for iOS feel
         centerTitle: true,
         title: Text(

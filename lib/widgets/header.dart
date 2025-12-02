@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
+import 'package:flutwork/widgets/profilecard.dart';
 
 import '../constants/style_constants.dart';
-import '../controllers/menu_app_controller.dart';
 import '../responsive.dart';
 
 class Header extends StatelessWidget {
   final String title;
+  final GlobalKey<ScaffoldState> scaffoldKey; // เพิ่ม
 
   const Header({
     super.key,
     required this.title,
+    required this.scaffoldKey, // เพิ่ม
   });
 
   @override
@@ -21,7 +22,9 @@ class Header extends StatelessWidget {
         if (!Responsive.isDesktop(context))
           IconButton(
             icon: Icon(Icons.menu),
-            onPressed: context.read<MenuAppController>().controlMenu,
+            onPressed: () {
+              scaffoldKey.currentState?.openDrawer(); // เปิด Drawer
+            },
           ),
         if (!Responsive.isMobile(context))
           Text(
@@ -37,42 +40,7 @@ class Header extends StatelessWidget {
   }
 }
 
-class ProfileCard extends StatelessWidget {
-  const ProfileCard({
-    super.key,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(left: defaultPadding),
-      padding: EdgeInsets.symmetric(
-        horizontal: defaultPadding,
-        vertical: defaultPadding / 2,
-      ),
-      decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        border: Border.all(color: Colors.white10),
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            "assets/images/profile_pic.png",
-            height: 38,
-          ),
-          if (!Responsive.isMobile(context))
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-              child: Text("Angelina Jolie"),
-            ),
-          Icon(Icons.keyboard_arrow_down),
-        ],
-      ),
-    );
-  }
-}
 
 class SearchField extends StatelessWidget {
   const SearchField({

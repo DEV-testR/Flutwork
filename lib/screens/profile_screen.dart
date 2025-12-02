@@ -5,7 +5,8 @@ import '../widgets/header.dart';
 import '../widgets/sub_header.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final GlobalKey<ScaffoldState> scaffoldKey;
+  const ProfileScreen({super.key, required this.scaffoldKey});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
           padding: EdgeInsets.all(defaultPadding),
           child: Column(
             children: [
-              Header(title: "Profile"),
+              Header(title: "Profile", scaffoldKey: scaffoldKey,),
               SizedBox(height: defaultPadding),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

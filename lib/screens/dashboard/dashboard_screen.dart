@@ -10,7 +10,8 @@ import 'components/recent_files.dart';
 import 'components/storage_details.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final GlobalKey<ScaffoldState> scaffoldKey;
+  const DashboardScreen({super.key, required this.scaffoldKey});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,10 @@ class DashboardScreen extends StatelessWidget {
             padding: EdgeInsets.all(defaultPadding),
             child: Column(
               children: [
-                Header(title: 'Dashboard'),
+                Header(
+                  title: 'Dashboard',
+                  scaffoldKey: scaffoldKey, // ส่ง key เข้าไป
+                ),
                 SizedBox(height: defaultPadding),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,

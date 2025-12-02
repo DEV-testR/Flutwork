@@ -9,16 +9,23 @@ import '../settings_screen.dart';
 import '../profile_screen.dart';
 import 'components/side_menu.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final menuController = context.watch<MenuAppController>();
 
     return Scaffold(
-      key: menuController.scaffoldKey,
-      drawer: const SideMenu(),
+      key: _scaffoldKey, // ใช้ key ของตัวเอง
+      drawer: !Responsive.isDesktop(context) ? SideMenu() : null, // Drawer เฉพาะมือถือ
       body: SafeArea(
         child: Row(
           children: [
@@ -26,7 +33,7 @@ class MainScreen extends StatelessWidget {
               const Expanded(child: SideMenu()),
             Expanded(
               flex: 5,
-              child: _buildScreen(menuController.selectedIndex),
+              child: _buildScreen(menuController.selectedIndex, _scaffoldKey),
             ),
           ],
         ),
@@ -35,18 +42,19 @@ class MainScreen extends StatelessWidget {
   }
 }
 
-Widget _buildScreen(int index) {
+
+Widget _buildScreen(int index, GlobalKey<ScaffoldState> scaffoldKey) {
   switch (index) {
     case 0:
-      return DashboardScreen();
+      return DashboardScreen(scaffoldKey : scaffoldKey);
     case 1:
-      return AIChatScreen();
+      return AIChatScreen(scaffoldKey : scaffoldKey);
     case 2:
-      return ProfileScreen();
+      return ProfileScreen(scaffoldKey : scaffoldKey);
     case 3:
-      return SettingsScreen();
+      return SettingsScreen(scaffoldKey : scaffoldKey);
     default:
-      return DashboardScreen();
+      return DashboardScreen(scaffoldKey : scaffoldKey);
   }
 }
 

@@ -5,7 +5,8 @@ import '../widgets/header.dart';
 import '../widgets/sub_header.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  final GlobalKey<ScaffoldState> scaffoldKey;
+  const SettingsScreen({super.key, required this.scaffoldKey});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class SettingsScreen extends StatelessWidget {
           padding: EdgeInsets.all(defaultPadding),
           child: Column(
             children: [
-              Header(title: "Settings"),
+              Header(title: "Settings", scaffoldKey: scaffoldKey,),
               SizedBox(height: defaultPadding),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

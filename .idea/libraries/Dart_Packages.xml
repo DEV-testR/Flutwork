@@ -194,7 +194,7 @@
         <entry key="google_fonts">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/google_fonts-6.3.2/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/google_fonts-6.3.3/lib" />
             </list>
           </value>
         </entry>
@@ -390,7 +390,7 @@
         <entry key="shared_preferences_android">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.17/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.18/lib" />
             </list>
           </value>
         </entry>
@@ -575,7 +575,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_secure_storage_web-1.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_secure_storage_windows-3.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_svg-2.2.3/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_fonts-6.3.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_fonts-6.3.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.6.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http_parser-4.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/intl-0.20.2/lib" />
@@ -603,7 +603,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/provider-6.1.5+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences-2.5.3/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.17/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.18/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_linux-2.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_platform_interface-2.4.1/lib" />
