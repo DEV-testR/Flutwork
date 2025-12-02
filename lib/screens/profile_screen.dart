@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../constants/style_constants.dart';
+import '../widgets/header.dart';
 import '../widgets/sub_header.dart';
-import 'component/header.dart';
-import 'component/my_files.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

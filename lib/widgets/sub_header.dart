@@ -1,9 +1,6 @@
 
 import 'package:flutter/material.dart';
 import '../constants/style_constants.dart';
-import '../models/my_files.dart';
-import '../responsive.dart';
-import '../screens/dashboard/components/file_info_card.dart';
 
 class SubHeader extends StatelessWidget {
   final String subtitle;
