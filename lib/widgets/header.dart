@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-import '../../../constants/style_constants.dart';
-import '../../../controllers/menu_app_controller.dart';
-import '../../../responsive.dart';
+import '../constants/style_constants.dart';
+import '../controllers/menu_app_controller.dart';
+import '../responsive.dart';
 
 class Header extends StatelessWidget {
+  final String title;
+
   const Header({
     super.key,
+    required this.title,
   });
 
   @override
@@ -22,7 +25,7 @@ class Header extends StatelessWidget {
           ),
         if (!Responsive.isMobile(context))
           Text(
-            "Dashboard",
+            title,
             style: Theme.of(context).textTheme.titleLarge,
           ),
         if (!Responsive.isMobile(context))

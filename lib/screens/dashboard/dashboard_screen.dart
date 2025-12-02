@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutwork/screens/dashboard/components/my_files.dart';
 
 import '../../constants/style_constants.dart';
 import '../../responsive.dart';
-import 'components/header.dart';
+import '../../widgets/sub_header.dart';
+import '../../widgets/header.dart';
 
-import 'components/my_fields.dart';
 import 'components/recent_files.dart';
 import 'components/storage_details.dart';
 
@@ -21,7 +22,7 @@ class DashboardScreen extends StatelessWidget {
             padding: EdgeInsets.all(defaultPadding),
             child: Column(
               children: [
-                Header(),
+                Header(title: 'Dashboard'),
                 SizedBox(height: defaultPadding),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,6 +31,7 @@ class DashboardScreen extends StatelessWidget {
                       flex: 5,
                       child: Column(
                         children: [
+                          SubHeader(subtitle: 'Dashboard'),
                           MyFiles(),
                           SizedBox(height: defaultPadding),
                           RecentFiles(),

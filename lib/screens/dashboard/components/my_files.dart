@@ -24,6 +24,8 @@ class MyFiles extends StatelessWidget {
             ),
             ElevatedButton.icon(
               style: TextButton.styleFrom(
+                backgroundColor: secondaryColor,        // สีพื้นหลัง
+                foregroundColor: defaultTextColor,      // บังคับให้ text + icon เป็นสีนี้
                 padding: EdgeInsets.symmetric(
                   horizontal: defaultPadding * 1.5,
                   vertical:

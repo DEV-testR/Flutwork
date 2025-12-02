@@ -5,16 +5,19 @@ class MenuAppController extends ChangeNotifier {
 
   GlobalKey<ScaffoldState> get scaffoldKey => _scaffoldKey;
 
-  void controlMenu() {
-    // 1. เก็บ currentState ไว้ในตัวแปรชั่วคราว (state)
-    final state = _scaffoldKey.currentState;
 
-    // 2. ตรวจสอบว่า state ไม่ใช่ null ก่อนดำเนินการ
-    if (state != null) {
-      // 3. ใช้ state แทนการเข้าถึง _scaffoldKey.currentState ซ้ำ ๆ
-      if (!state.isDrawerOpen) {
-        state.openDrawer();
-      }
+  int _selectedIndex = 0;
+  int get selectedIndex => _selectedIndex;
+
+  void selectMenu(int index) {
+    _selectedIndex = index;
+    notifyListeners();          // แจ้งให้ UI rebuild
+  }
+
+  void controlMenu() {
+    final state = _scaffoldKey.currentState;
+    if (state != null && !state.isDrawerOpen) {
+      state.openDrawer();
     }
   }
 }

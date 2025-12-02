@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutwork/screens/ai_chat_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/menu_app_controller.dart';
 import '../../responsive.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../settings_screen.dart';
+import '../profile_screen.dart';
 import 'components/side_menu.dart';
 
 class MainScreen extends StatelessWidget {
@@ -11,24 +14,19 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final menuController = context.watch<MenuAppController>();
+
     return Scaffold(
-      key: context.read<MenuAppController>().scaffoldKey,
-      drawer: SideMenu(),
+      key: menuController.scaffoldKey,
+      drawer: const SideMenu(),
       body: SafeArea(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // We want this side menu only for large screen
             if (Responsive.isDesktop(context))
-              Expanded(
-                // default flex = 1
-                // and it takes 1/6 part of the screen
-                child: SideMenu(),
-              ),
+              const Expanded(child: SideMenu()),
             Expanded(
-              // It takes 5/6 part of the screen
               flex: 5,
-              child: DashboardScreen(),
+              child: _buildScreen(menuController.selectedIndex),
             ),
           ],
         ),
@@ -36,3 +34,19 @@ class MainScreen extends StatelessWidget {
     );
   }
 }
+
+Widget _buildScreen(int index) {
+  switch (index) {
+    case 0:
+      return DashboardScreen();
+    case 1:
+      return AIChatScreen();
+    case 2:
+      return ProfileScreen();
+    case 3:
+      return SettingsScreen();
+    default:
+      return DashboardScreen();
+  }
+}
+
