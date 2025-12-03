@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutwork/screens/dashboard/components/my_files.dart';
 
 import '../../constants/style_constants.dart';
+import '../../models/user.dart';
 import '../../responsive.dart';
-import '../../widgets/sub_header.dart';
 import '../../widgets/header.dart';
-
+import '../../widgets/sub_header.dart';
 import 'components/recent_files.dart';
 import 'components/storage_details.dart';
 
 class DashboardScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
-  const DashboardScreen({super.key, required this.scaffoldKey});
+  final User user;
+
+  const DashboardScreen({
+    super.key,
+    required this.scaffoldKey,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,7 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 Header(
                   title: 'Dashboard',
-                  scaffoldKey: scaffoldKey, // ส่ง key เข้าไป
+                  scaffoldKey: scaffoldKey,
                 ),
                 SizedBox(height: defaultPadding),
                 Row(
@@ -35,7 +41,7 @@ class DashboardScreen extends StatelessWidget {
                       flex: 5,
                       child: Column(
                         children: [
-                          SubHeader(subtitle: 'Dashboard'),
+                          SubHeader(subtitle: 'Dashboard ${user.fullName}'),
                           MyFiles(),
                           SizedBox(height: defaultPadding),
                           RecentFiles(),

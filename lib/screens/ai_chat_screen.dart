@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../constants/style_constants.dart';
+import '../models/user.dart';
 import '../widgets/header.dart';
 import '../widgets/sub_header.dart';
 
 class AIChatScreen extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
-  const AIChatScreen({super.key, required this.scaffoldKey});
+  final User user;
+  const AIChatScreen({super.key, required this.scaffoldKey, required this.user});
 
   @override
   State<AIChatScreen> createState() => _AIChatScreenState();
@@ -63,8 +65,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
             children: [
               Header(title: "AI Chat", scaffoldKey: widget.scaffoldKey),
               SizedBox(height: defaultPadding),
-              SubHeader(subtitle: 'AI Assistant'),
-
+              SubHeader(subtitle: 'AI Assistant Welcome ${widget.user.fullName}'),
               SizedBox(height: defaultPadding),
 
               // ---------------- Chat Messages ----------------

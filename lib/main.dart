@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutwork/providers/auth_provider.dart';
+import 'package:flutwork/providers/user_provider.dart';
 import 'package:flutwork/services/auth_service.dart';
 import 'package:flutwork/services/dio_client.dart';
 import 'package:flutwork/services/preferences_service.dart';
 import 'package:flutwork/services/secure_storage_service.dart';
+import 'package:flutwork/services/user_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -23,25 +25,21 @@ void main() async {
   final secureStorage = SecureStorageService();
   await PreferencesService.init();
 
-  final dioClient = DioClient(
-    Dio(),
-    secureStorage,
+  final dioClient = DioClient(Dio(), secureStorage,
     onAuthError: () {
       loggerNoStack.w("Auth error occurred");
     },
   );
 
   final authService = AuthService(dioClient);
+  final userService = UserService(dioClient);
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthProvider>(
-          create: (_) => AuthProvider(authService, secureStorage),
-        ),
-        ChangeNotifierProvider<MenuAppController>(
-          create: (_) => MenuAppController(),
-        ),
+        ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider(authService, secureStorage)),
+        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider(userService)),
+        ChangeNotifierProvider<MenuAppController>(create: (_) => MenuAppController()),
       ],
       child: const MyApp(),
     ),

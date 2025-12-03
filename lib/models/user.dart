@@ -1,6 +1,4 @@
-
 class User {
-
   final int id;
   final String email;
   final String fullName;
@@ -22,23 +20,20 @@ class User {
   });
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {
-      'id': id,
-      'email': email,
-    };
+    final Map<String, dynamic> data = {'id': id, 'email': email};
     return data;
   }
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'] as int,
-      email: json['email'] as String,
-      fullName: json['fullName'] as String,
-      phone: json['phone'] as String,
-      address: json['address'] as String,
-      profilePictureUrl: json['profilePictureUrl'] as String,
-      socialProvider: json['socialProvider'] as String,
-      socialId: json['socialId'] as String,
+      email: json['email'] ?? '',
+      fullName: json['fullName'] ?? '',
+      phone: json['phone'] ?? '',
+      address: json['address'] ?? '',
+      profilePictureUrl: json['profilePictureUrl'] ?? '',
+      socialProvider: json['socialProvider'] ?? '',
+      socialId: json['socialId'] ?? '',
     );
   }
 }

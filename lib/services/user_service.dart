@@ -14,11 +14,11 @@ class UserService {
 
   UserService(this._dioClient);
 
-  Future<User> fetchCurrentUser(SignInRequest request) async {
+  Future<User> fetchCurrentUser() async {
     try {
-      logger.d('[BEGIN] AuthService.login');
+      logger.d('[BEGIN] UserService.fetchCurrentUser');
       final response = await _dioClient.get(
-        '${ApiConstants.baseUrl}/api/v1/users/me',
+        '${ApiConstants.baseUrl}/v1/users/me',
       );
 
       // Validate response data
