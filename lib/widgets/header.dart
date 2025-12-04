@@ -33,7 +33,9 @@ class Header extends StatelessWidget {
           ),
         if (!Responsive.isMobile(context))
           Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
-        Expanded(child: SearchField()),
+        /*Expanded(child: SearchField()),*/
+        // Spacer นี้จะทำหน้าที่ผลัก ProfileCard ไปสุดขอบขวา
+        const Spacer(),
         ProfileCard()
       ],
     );

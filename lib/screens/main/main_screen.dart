@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutwork/screens/ai_chat_screen.dart';
+import 'package:flutwork/screens/document/quotation.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/menu_app_controller.dart';
@@ -94,8 +95,10 @@ Widget _buildScreen(int index, GlobalKey<ScaffoldState> scaffoldKey, User curren
     case 1:
       return AIChatScreen(scaffoldKey : scaffoldKey, user: currentUser);
     case 2:
+      return QuotationScreen(scaffoldKey : scaffoldKey);
+    case 9:
       return ProfileScreen(scaffoldKey : scaffoldKey);
-    case 3:
+    case 10:
       return SettingsScreen(scaffoldKey : scaffoldKey);
     default:
       return DashboardScreen(scaffoldKey : scaffoldKey, user: currentUser);

@@ -24,14 +24,19 @@ class SideMenu extends StatelessWidget {
             index: 1,
           ),
           DrawerListTile(
+            title: "Quotation",
+            svgSrc: "assets/icons/menu_dashboard.svg",
+            index: 2,
+          ),
+          DrawerListTile(
             title: "Profile",
             svgSrc: "assets/icons/menu_tran.svg",
-            index: 2,
+            index: 9,
           ),
           DrawerListTile(
             title: "Settings",
             svgSrc: "assets/icons/menu_setting.svg",
-            index: 3,
+            index: 10,
           ),
         ],
       ),
