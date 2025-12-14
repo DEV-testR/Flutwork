@@ -3,14 +3,13 @@ import 'package:flutwork/screens/ai_chat_screen.dart';
 import 'package:flutwork/screens/document/quotation.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/menu_app_provider.dart';
-import '../../models/auth_response.dart';
 import '../../models/user.dart';
+import '../../providers/menu_app_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../responsive.dart';
 import '../dashboard/dashboard_screen.dart';
-import '../settings_screen.dart';
 import '../profile_screen.dart';
+import '../settings_screen.dart';
 import 'components/side_menu.dart';
 
 class MainScreen extends StatefulWidget {

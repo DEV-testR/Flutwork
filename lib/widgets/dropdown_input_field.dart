@@ -73,7 +73,7 @@ class DropdownInputField extends StatelessWidget {
           ),
 
           items: items.map((String value) {
-            final bool isSelected = selectedValue == value;
+            // final bool isSelected = selectedValue == value;
             return DropdownMenuItem<String>(
               value: value,
               // ใช้ Align เพื่อให้ text เต็มความกว้างของ item
