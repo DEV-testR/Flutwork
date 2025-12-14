@@ -1,7 +1,7 @@
 // lib/providers/auth_provider.dart
 
 import 'package:flutter/material.dart';
-import '../main.dart';
+import '../utils/logger.dart';
 import '../models/auth_response.dart';
 import '../models/signin_request.dart';
 import '../services/auth_service.dart';

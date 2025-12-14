@@ -1,15 +1,15 @@
-// lib/services/auth_service.dart
+// lib/services/user_service.dart
 
 import 'package:dio/dio.dart';
 
 import '../constants/api_constants.dart';
-import '../main.dart';
-import '../models/signin_request.dart';
+import '../utils/logger.dart';
 import '../models/user.dart';
+import 'base_service.dart';
 import 'dio_client.dart';
 
-/// Service for Authentication API calls
-class UserService {
+/// Service for User API calls
+class UserService extends BaseService {
   final DioClient _dioClient;
 
   UserService(this._dioClient);
@@ -33,57 +33,10 @@ class UserService {
 
       return User.fromJson(response.data);
     } on DioException catch (e) {
-      final errorMessage = _handleDioError(e);
+      final errorMessage = handleDioError(e);
       throw Exception(errorMessage);
     } catch (e) {
-      throw Exception('Unknown error occurred in login: ${e.toString()}');
+      throw Exception('Unknown error occurred in fetchCurrentUser: ${e.toString()}');
     }
-  }
-
-  /// Private helper to handle DioException consistently
-  String _handleDioError(DioException e) {
-    String errorMessage = 'Failed to connect to the server.';
-    if (e.response != null) {
-      final statusCode = e.response!.statusCode;
-      final responseData = e.response!.data;
-
-      switch (statusCode) {
-        case 400:
-          if (responseData != null &&
-              responseData is Map<String, dynamic> &&
-              responseData.containsKey('message')) {
-            errorMessage = responseData['message'].toString();
-          } else {
-            errorMessage = 'Bad request: $statusCode';
-          }
-          break;
-        case 401:
-          errorMessage = 'Unauthorized: Invalid credentials';
-          break;
-        case 404:
-          errorMessage = 'API endpoint not found: $statusCode';
-          break;
-        case 500:
-          errorMessage = 'Internal server error: $statusCode';
-          break;
-        default:
-          errorMessage = 'Server error: $statusCode';
-      }
-    } else {
-      switch (e.type) {
-        case DioExceptionType.connectionTimeout:
-        case DioExceptionType.sendTimeout:
-        case DioExceptionType.receiveTimeout:
-          errorMessage = 'Connection timeout. Please try again.';
-          break;
-        case DioExceptionType.unknown:
-          errorMessage = 'Cannot connect to server. Check your internet.';
-          break;
-        default:
-          errorMessage = 'Network error: ${e.message}';
-      }
-    }
-    logger.e('DioException: $errorMessage');
-    return errorMessage;
   }
 }

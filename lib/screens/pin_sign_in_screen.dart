@@ -3,7 +3,7 @@ import 'package:flutwork/constants/style_constants.dart';
 import 'package:flutwork/screens/sign_in_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart'; // Assuming this imports your logger
+import '../utils/logger.dart';
 import '../providers/auth_provider.dart';
 import 'main/main_screen.dart';
 

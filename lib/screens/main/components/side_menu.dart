@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/style_constants.dart';
-import '../../../controllers/menu_app_controller.dart';
+import '../../../providers/menu_app_provider.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
@@ -57,7 +57,7 @@ class DrawerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final menuController = context.read<MenuAppController>();
+    final menuController = context.read<MenuAppProvider>();
 
     return ListTile(
       onTap: () {

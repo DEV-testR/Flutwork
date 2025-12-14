@@ -1,10 +1,10 @@
-// lib/network/dio_client.dart
+// lib/services/dio_client.dart
 
 import 'package:dio/dio.dart';
 import 'dart:ui';
-import '../main.dart'; // logger
+import '../utils/logger.dart';
 import '../constants/api_constants.dart';
-import '../services/secure_storage_service.dart';
+import 'secure_storage_service.dart';
 
 /// DioClient handles HTTP requests, token management, and automatic token refresh
 class DioClient {

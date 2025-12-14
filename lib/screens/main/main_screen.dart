@@ -3,7 +3,7 @@ import 'package:flutwork/screens/ai_chat_screen.dart';
 import 'package:flutwork/screens/document/quotation.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/menu_app_controller.dart';
+import '../../providers/menu_app_provider.dart';
 import '../../models/auth_response.dart';
 import '../../models/user.dart';
 import '../../providers/user_provider.dart';
@@ -54,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final menuController = context.watch<MenuAppController>();
+    final menuController = context.watch<MenuAppProvider>();
 
     if (_isLoading) {
       return const Scaffold(

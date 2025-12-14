@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart'; // logger
+import '../utils/logger.dart';
 import '../providers/auth_provider.dart';
 import '../services/preferences_service.dart';
 import 'pin_sign_in_screen.dart';
