@@ -1,4 +1,8 @@
+/// API configuration. Override at build time, e.g.:
+/// `flutter run --dart-define=API_BASE_URL=https://api.example.com/api/`
 class ApiConstants {
-  // Base URL ของ API ของคุณ
-  static const String baseUrl = 'http://192.168.50.43:48080/api'; // หรือ URL ของ server จริงของคุณ
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://192.168.50.43:48080/api/',
+  );
 }

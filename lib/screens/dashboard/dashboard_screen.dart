@@ -21,50 +21,46 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgColor,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            primary: false,
-            padding: EdgeInsets.all(defaultPadding),
-            child: Column(
-              children: [
-                Header(
-                  title: 'Dashboard',
-                  scaffoldKey: scaffoldKey,
-                ),
-                SizedBox(height: defaultPadding),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 5,
-                      child: Column(
-                        children: [
-                          SubHeader(subtitle: 'Dashboard ${user.fullName}'),
-                          MyFiles(),
-                          SizedBox(height: defaultPadding),
-                          RecentFiles(),
-                          if (Responsive.isMobile(context))
-                            SizedBox(height: defaultPadding),
-                          if (Responsive.isMobile(context)) StorageDetails(),
-                        ],
-                      ),
-                    ),
-                    if (!Responsive.isMobile(context))
-                      SizedBox(width: defaultPadding),
-                    // On Mobile means if the screen is less than 850 we don't want to show it
-                    if (!Responsive.isMobile(context))
-                      Expanded(
-                        flex: 2,
-                        child: StorageDetails(),
-                      ),
-                  ],
-                )
-              ],
-            ),
+    // Content only: [MainScreen] already owns the [Scaffold]. Nested scaffolds can
+    // leave the parent FAB layer unlaid-out while still receiving hit tests.
+    return SingleChildScrollView(
+      primary: false,
+      padding: EdgeInsets.all(defaultPadding),
+      child: Column(
+        children: [
+          Header(
+            title: 'Dashboard',
+            scaffoldKey: scaffoldKey,
           ),
-        ),
+          SizedBox(height: defaultPadding),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 5,
+                child: Column(
+                  children: [
+                    SubHeader(subtitle: 'Dashboard ${user.fullName}'),
+                    MyFiles(),
+                    SizedBox(height: defaultPadding),
+                    RecentFiles(),
+                    if (Responsive.isMobile(context))
+                      SizedBox(height: defaultPadding),
+                    if (Responsive.isMobile(context)) StorageDetails(),
+                  ],
+                ),
+              ),
+              if (!Responsive.isMobile(context))
+                SizedBox(width: defaultPadding),
+              if (!Responsive.isMobile(context))
+                Expanded(
+                  flex: 2,
+                  child: StorageDetails(),
+                ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

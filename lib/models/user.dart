@@ -20,20 +20,31 @@ class User {
   });
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {'id': id, 'email': email};
-    return data;
+    return {'id': id, 'email': email};
+  }
+
+  static int? _parseId(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString());
   }
 
   factory User.fromJson(Map<String, dynamic> json) {
+    final id = _parseId(json['id']);
+    if (id == null) {
+      throw FormatException('Missing or invalid user id', json);
+    }
+
     return User(
-      id: json['id'] as int,
-      email: json['email'] ?? '',
-      fullName: json['fullName'] ?? '',
-      phone: json['phone'] ?? '',
-      address: json['address'] ?? '',
-      profilePictureUrl: json['profilePictureUrl'] ?? '',
-      socialProvider: json['socialProvider'] ?? '',
-      socialId: json['socialId'] ?? '',
+      id: id,
+      email: json['email']?.toString() ?? '',
+      fullName: json['fullName']?.toString() ?? '',
+      phone: json['phone']?.toString() ?? '',
+      address: json['address']?.toString() ?? '',
+      profilePictureUrl: json['profilePictureUrl']?.toString() ?? '',
+      socialProvider: json['socialProvider']?.toString() ?? '',
+      socialId: json['socialId']?.toString() ?? '',
     );
   }
 }

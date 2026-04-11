@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutwork/constants/style_constants.dart';
-import 'package:flutwork/screens/sign_in_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/logger.dart';
@@ -38,15 +37,10 @@ class _PinSignInScreenState extends State<PinSignInScreen> {
       }
 
       if (loginSuccess) {
-        logger.d('Login successful. Removing PinCodeScreen from navigator stack.');
-        // Navigator.pop(context); // Pop this screen off the stack
-        /*navigatorKey.currentState!.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
-              (Route<dynamic> route) => false, // This condition removes all previous routes
-        );*/
-        Navigator.push(
+        logger.d('Login successful. Replacing stack with MainScreen.');
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MainScreen()),
+          MaterialPageRoute(builder: (context) => const MainScreen()),
         );
       } else {
         setState(() {
@@ -83,14 +77,8 @@ class _PinSignInScreenState extends State<PinSignInScreen> {
           style: const TextStyle(color: Colors.black, fontSize: 18), // Black title text
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.blue), // iOS style back arrow
-          onPressed: () {
-            // Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SignInScreen()),
-            );
-          },
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Column(

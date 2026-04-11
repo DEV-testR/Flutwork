@@ -44,8 +44,7 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
 
           // Navigate to Dashboard if authenticated
           if (authProvider.isAuthenticated) {
-            return MainScreen();
-            // return DashboardScreen();
+            return const MainScreen();
           }
 
           // Otherwise, show SignIn screen

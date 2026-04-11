@@ -30,11 +30,12 @@ class _AIChatScreenState extends State<AIChatScreen> {
     _controller.clear();
     _scrollToBottom();
 
-    // Mock AI reply (คุณค่อยไปเชื่อม API จริง)
-    Future.delayed(Duration(milliseconds: 400), () {
+    // Mock AI reply (replace with real API integration when ready)
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
       setState(() {
         _messages.add(_ChatMessage(
-          text: "AI received: $text",
+          text: 'AI received: $text',
           isUser: false,
         ));
       });
@@ -43,11 +44,12 @@ class _AIChatScreenState extends State<AIChatScreen> {
   }
 
   void _scrollToBottom() {
-    Future.delayed(Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (!mounted) return;
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
       }
@@ -55,73 +57,72 @@ class _AIChatScreenState extends State<AIChatScreen> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(defaultPadding),
-          child: Column(
-            children: [
-              Header(title: "AI Chat", scaffoldKey: widget.scaffoldKey),
-              SizedBox(height: defaultPadding),
-              SubHeader(subtitle: 'AI Assistant Welcome ${widget.user.fullName}'),
-              SizedBox(height: defaultPadding),
-
-              // ---------------- Chat Messages ----------------
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.all(defaultPadding),
-                  decoration: BoxDecoration(
-                    color: secondaryColor,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white10),
-                  ),
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final msg = _messages[index];
-                      return _ChatBubble(message: msg);
-                    },
-                  ),
-                ),
-              ),
-
-              SizedBox(height: defaultPadding / 2),
-
-              // ---------------- Input Field ----------------
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: secondaryColor,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white10),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        style: TextStyle(color: defaultTextColor),
-                        decoration: InputDecoration(
-                          hintText: "Type a message...",
-                          hintStyle: TextStyle(color: Colors.white54),
-                          border: InputBorder.none,
-                        ),
-                        onSubmitted: (_) => _sendMessage(),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.send, color: primaryColor),
-                      onPressed: _sendMessage,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    return Padding(
+      padding: EdgeInsets.all(defaultPadding),
+      child: Column(
+        children: [
+          Header(title: 'AI Chat', scaffoldKey: widget.scaffoldKey),
+          SizedBox(height: defaultPadding),
+          SubHeader(
+            subtitle: 'AI Assistant Welcome ${widget.user.fullName}',
           ),
-        ),
+          SizedBox(height: defaultPadding),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(defaultPadding),
+              decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white10),
+              ),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final msg = _messages[index];
+                  return _ChatBubble(message: msg);
+                },
+              ),
+            ),
+          ),
+          SizedBox(height: defaultPadding / 2),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: secondaryColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white10),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    style: TextStyle(color: defaultTextColor),
+                    decoration: const InputDecoration(
+                      hintText: 'Type a message...',
+                      hintStyle: TextStyle(color: Colors.white54),
+                      border: InputBorder.none,
+                    ),
+                    onSubmitted: (_) => _sendMessage(),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.send, color: primaryColor),
+                  onPressed: _sendMessage,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -141,14 +142,14 @@ class _ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isUser = message.isUser;
+    final isUser = message.isUser;
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 6),
+      margin: const EdgeInsets.symmetric(vertical: 6),
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        padding: EdgeInsets.all(12),
-        constraints: BoxConstraints(maxWidth: 320),
+        padding: const EdgeInsets.all(12),
+        constraints: const BoxConstraints(maxWidth: 320),
         decoration: BoxDecoration(
           color: isUser ? primaryColor : Colors.white10,
           borderRadius: BorderRadius.circular(10),

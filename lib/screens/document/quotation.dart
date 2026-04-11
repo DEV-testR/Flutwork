@@ -173,37 +173,26 @@ class _QuotationScreenState extends State<QuotationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          padding: const EdgeInsets.all(defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Header(
-                title: "Quotation Search",
-                scaffoldKey: widget.scaffoldKey,
-              ),
-
-              const SizedBox(height: 16),
-
-              _buildSearchCriteriaHeader(primaryColor),
-
-              const SizedBox(height: 16),
-
-              Form(
-                key: _formKey,
-                child: _buildFormSearch(context, primaryColor),
-              ),
-
-              const SizedBox(height: 30),
-
-              _buildSearchResults(primaryColor),
-            ],
+    return SingleChildScrollView(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(defaultPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Header(
+            title: "Quotation Search",
+            scaffoldKey: widget.scaffoldKey,
           ),
-        ),
+          const SizedBox(height: 16),
+          _buildSearchCriteriaHeader(primaryColor),
+          const SizedBox(height: 16),
+          Form(
+            key: _formKey,
+            child: _buildFormSearch(context, primaryColor),
+          ),
+          const SizedBox(height: 30),
+          _buildSearchResults(primaryColor),
+        ],
       ),
     );
   }
@@ -347,7 +336,7 @@ class _QuotationScreenState extends State<QuotationScreen> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -370,11 +359,16 @@ class _QuotationScreenState extends State<QuotationScreen> {
             color: defaultTextColor,
           ),
         ),
-        FloatingActionButton(
+        IconButton.filled(
           onPressed: () {},
-          backgroundColor: primaryColor,
-          mini: true,
-          child: const Icon(Icons.add, color: Colors.white),
+          style: IconButton.styleFrom(
+            backgroundColor: primaryColor,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(40, 40),
+            padding: EdgeInsets.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          icon: const Icon(Icons.add),
         ),
       ],
     );

@@ -10,32 +10,27 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          primary: false,
-          padding: EdgeInsets.all(defaultPadding),
-          child: Column(
+    return SingleChildScrollView(
+      primary: false,
+      padding: EdgeInsets.all(defaultPadding),
+      child: Column(
+        children: [
+          Header(title: "Settings", scaffoldKey: scaffoldKey),
+          SizedBox(height: defaultPadding),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Header(title: "Settings", scaffoldKey: scaffoldKey,),
-              SizedBox(height: defaultPadding),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: Column(
-                      children: [
-                        SubHeader(subtitle : 'Settings'),
-                      ],
-                    ),
-                  ),
-                ],
-              )
+              Expanded(
+                flex: 5,
+                child: Column(
+                  children: [
+                    SubHeader(subtitle: 'Settings'),
+                  ],
+                ),
+              ),
             ],
-          ),
-        ),
+          )
+        ],
       ),
     );
   }

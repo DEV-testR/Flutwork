@@ -2,4 +2,5 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <type id="android" />
   </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_26" project-jdk-name="Android API 36, extension level 17 Platform" project-jdk-type="Android SDK" />
 </project>

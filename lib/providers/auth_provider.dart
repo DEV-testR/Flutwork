@@ -1,8 +1,10 @@
 // lib/providers/auth_provider.dart
 
 import 'package:flutter/material.dart';
+
 import '../utils/logger.dart';
 import '../models/auth_response.dart';
+import '../models/login_request.dart';
 import '../models/signin_request.dart';
 import '../services/auth_service.dart';
 import '../services/secure_storage_service.dart';
@@ -21,6 +23,10 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   String? get email => _email;
+
+  /// User object from the last successful login response, if the API returned one.
+  Map<String, dynamic>? get loginUserPayload => _authResponse?.user;
+
   bool get isAuthenticated => _authResponse != null;
 
   AuthProvider(this._authService, this._secureStorage);
@@ -55,7 +61,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Login using email and password
+  /// Login using email and password (legacy `auth/login` + [SignInRequest]).
   Future<bool> login(String email, String password) async {
     logger.d('[BEGIN] AuthProvider.login');
     _isLoading = true;
@@ -66,6 +72,7 @@ class AuthProvider extends ChangeNotifier {
       final request = SignInRequest(email: email, password: password);
       final response = await _authService.login(request);
       _authResponse = response;
+      _email = email;
 
       await _secureStorage.saveTokens(
         accessToken: response.accessToken,
@@ -84,6 +91,54 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  /// Login with email/password via `POST /login` and [LoginRequest].
+  /// Refresh token may be HttpOnly-only; [Dio] must use [CookieManager] (see [DioClient]).
+  Future<bool> loginWithPassword(String email, String password) async {
+    logger.d('[BEGIN] AuthProvider.loginWithPassword');
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final request = LoginRequest(email: email, password: password);
+      final response = await _authService.loginWithPassword(request);
+
+      _authResponse = response;
+      _email = email;
+
+      // Persist access token; refresh may be empty when only set as HttpOnly cookie.
+      await _secureStorage.saveTokens(
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+      );
+
+      logger.d('loginWithPassword successful');
+      return true;
+    } catch (e) {
+      _authResponse = null;
+      _errorMessage = _mapLoginFailureMessage(e);
+      logger.e('loginWithPassword error: $e');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Maps exceptions to UI-safe messages (e.g. 401 Unauthorized).
+  static String _mapLoginFailureMessage(Object e) {
+    final s = e.toString();
+    if (s.contains('401') ||
+        s.contains('Unauthorized') ||
+        s.contains('Invalid credentials')) {
+      return 'Invalid email or password.';
+    }
+    if (s.contains('timeout') || s.contains('Cannot connect')) {
+      return 'Could not reach the server. Check your connection.';
+    }
+    return 'Login failed. Please try again.';
+  }
+
   /// Login using PIN
   Future<bool> loginWithPin(String email, String pin) async {
     logger.d('[BEGIN] AuthProvider.loginWithPin');
@@ -94,6 +149,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final response = await _authService.loginWithPin(email, pin);
       _authResponse = response;
+      _email = email;
 
       await _secureStorage.saveTokens(
         accessToken: response.accessToken,
@@ -113,15 +169,10 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Validate email using API
+  /// Validate email using API (throws on network / server errors).
   Future<bool> validateEmail(String email) async {
     logger.d('[BEGIN] AuthProvider.validateEmail');
-    try {
-      return await _authService.validateEmail(email);
-    } catch (e) {
-      logger.e('validateEmail error: $e');
-      return false;
-    }
+    return _authService.validateEmail(email);
   }
 
   /// Logout user and clear stored tokens

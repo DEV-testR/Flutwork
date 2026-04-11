@@ -3,13 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/style_constants.dart';
 import '../utils/logger.dart';
 import '../providers/auth_provider.dart';
 import '../services/preferences_service.dart';
+import 'main/main_screen.dart';
 import 'pin_sign_in_screen.dart';
 
-/// SignIn screen with email/password and PIN options.
-/// Supports email validation, loading state, and social login placeholders.
+/// Sign-in screen with email/password and PIN options.
+/// Uses [ThemeData] and [style_constants] for a single design system.
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -25,21 +27,6 @@ class _SignInScreenState extends State<SignInScreen> {
   bool _isLoading = false;
   bool _showPasswordInput = false;
   String? _emailErrorText;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // โหลด email ที่เคยจำไว้
-    final savedEmail = PreferencesService.getRememberEmail();
-    if (savedEmail != null && savedEmail.isNotEmpty) {
-      _emailController.text = savedEmail;
-    }
-  }
-
-  // -----------------------
-  // Helper Methods
-  // -----------------------
 
   void _setLoading(bool value) {
     if (mounted) {
@@ -60,8 +47,17 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _showSnackBar(String message) {
     if (!mounted) return;
+    final theme = Theme.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red.shade400),
+      SnackBar(
+        content: Text(
+          message,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onError,
+          ),
+        ),
+        backgroundColor: theme.colorScheme.error,
+      ),
     );
   }
 
@@ -70,13 +66,11 @@ class _SignInScreenState extends State<SignInScreen> {
     if (!_isEmailValid(email)) return;
 
     _setLoading(true);
-    bool exists = false;
+    var exists = false;
     String? errorMessage;
 
     try {
-      // ดึง Provider ก่อนเข้าสู่ async เพื่อหลีกเลี่ยงการใช้ context หลัง async gap
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
       exists = await authProvider.validateEmail(email);
     } catch (e) {
       logger.e('Email validation error: $e');
@@ -89,19 +83,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
     if (!mounted) return;
 
-    // ----- handle result -----
     if (exists) {
       await PreferencesService.saveRememberEmail(email);
-
       if (!mounted) return;
-
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => PinSignInScreen(email: email),
         ),
       );
-
       logger.d('Navigated to PinSignInScreen with $email');
     } else {
       setState(() => _emailErrorText = 'This email is not found in the system.');
@@ -115,39 +105,213 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> _doLoginWithPassword() async {
     if (!_formKey.currentState!.validate()) return;
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
 
     _setLoading(true);
     try {
-      // Placeholder for login logic
-      // Example:
-      // final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      // await authProvider.login(email, password);
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final success = await auth.loginWithPassword(email, password);
+      if (!mounted) return;
+
+      if (success) {
+        await PreferencesService.saveRememberEmail(email);
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainScreen()),
+        );
+      } else {
+        _showSnackBar(auth.errorMessage ?? 'Login failed.');
+      }
     } finally {
-      _setLoading(false);
+      if (mounted) {
+        _setLoading(false);
+      }
     }
   }
 
-  Widget _buildSocialIconButton({
-    required String iconPath,
-    required String tooltip,
-    required VoidCallback onPressed,
-  }) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey.shade200, width: 0.8),
-        boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5, offset: const Offset(0, 3))],
-      ),
-      child: IconButton(
-        padding: EdgeInsets.zero,
-        icon: Image.asset(iconPath, height: 28, width: 28),
-        onPressed: _isLoading ? null : onPressed,
-        tooltip: tooltip,
+  /// Brand row: icon + app name using [ColorScheme.primary].
+  Widget _buildHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.pets, color: primary, size: 40),
+            const SizedBox(width: 8),
+            Text(
+              'FlutWork',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                color: primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Sign In',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: defaultTextColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Form fields and primary action; styles come from [ThemeData].
+  Widget _buildSignInForm(BuildContext context) {
+    final theme = Theme.of(context);
+    final bodyLarge = theme.textTheme.bodyLarge;
+
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextFormField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            style: bodyLarge,
+            decoration: InputDecoration(
+              hintText: 'Email or Username',
+              errorText: _emailErrorText,
+            ).applyDefaults(theme.inputDecorationTheme),
+            onChanged: (_) {
+              if (_emailErrorText != null) {
+                setState(() => _emailErrorText = null);
+              }
+            },
+            enabled: !_isLoading,
+          ),
+          if (_showPasswordInput) ...[
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              style: bodyLarge,
+              decoration: InputDecoration(
+                hintText: 'Password',
+              ).applyDefaults(theme.inputDecorationTheme),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password.';
+                }
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters.';
+                }
+                return null;
+              },
+              enabled: !_isLoading,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: _isLoading ? null : () {},
+                child: const Text('Forgot Password?'),
+              ),
+            ),
+          ],
+          const SizedBox(height: 20),
+          SizedBox(
+            height: 54,
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      if (_showPasswordInput) {
+                        _doLoginWithPassword();
+                      } else {
+                        _verifyEmail();
+                      }
+                    },
+              child: _isLoading
+                  ? SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: theme.colorScheme.onPrimary,
+                      ),
+                    )
+                  : Text(
+                      _showPasswordInput
+                          ? 'Sign In'
+                          : 'Sign In with Account',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  /// Secondary label and social icon row (placeholders until OAuth is wired).
+  Widget _buildSocialLogin(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
+    return Column(
+      children: [
+        const SizedBox(height: 30),
+        Text(
+          'Or sign in with',
+          style: theme.textTheme.titleSmall?.copyWith(
+            color: defaultTextColor.withValues(alpha: 0.7),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _SocialIconButton(
+              iconPath: 'assets/images/google-logo.png',
+              tooltip: 'Sign in with Google',
+              isLoading: _isLoading,
+              onPressed: () {},
+              borderColor: cs.outlineVariant,
+            ),
+            _SocialIconButton(
+              iconPath: 'assets/images/facebook-logo.png',
+              tooltip: 'Sign in with Facebook',
+              isLoading: _isLoading,
+              onPressed: () {},
+              borderColor: cs.outlineVariant,
+            ),
+            _SocialIconButton(
+              iconPath: 'assets/images/apple-logo.png',
+              tooltip: 'Sign in with Apple',
+              isLoading: _isLoading,
+              onPressed: () {},
+              borderColor: cs.outlineVariant,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final savedEmail = PreferencesService.getRememberEmail();
+    if (savedEmail != null && savedEmail.isNotEmpty) {
+      _emailController.text = savedEmail;
+    }
   }
 
   @override
@@ -159,144 +323,105 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final inputDecoration = InputDecoration(
-      filled: true,
-      fillColor: Colors.grey.shade100,
-      hintStyle: TextStyle(color: Colors.grey.shade500),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Colors.blue, width: 1.5)),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
-    );
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 80),
-
-              // Logo + App Name
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.pets, color: Colors.blue.shade700, size: 40),
-                  const SizedBox(width: 8),
-                  Text('FlutWork', style: TextStyle(color: Colors.blue.shade700, fontSize: 36, fontWeight: FontWeight.bold)),
-                ],
-              ),
-              const SizedBox(height: 60),
-
-              Align(
-                alignment: Alignment.centerLeft,
-                child: const Text('Sign In', style: TextStyle(color: Colors.black87, fontSize: 30, fontWeight: FontWeight.bold)),
-              ),
-              const SizedBox(height: 30),
-
-              // Form Section
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: inputDecoration.copyWith(hintText: 'Email or Username', errorText: _emailErrorText),
-                      onChanged: (_) {
-                        if (_emailErrorText != null) setState(() => _emailErrorText = null);
-                      },
-                      enabled: !_isLoading,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Center(
+                  child: IntrinsicHeight(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 24),
+                        _buildHeader(context),
+                        const SizedBox(height: 32),
+                        _buildSignInForm(context),
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                                  setState(() {
+                                    _showPasswordInput = !_showPasswordInput;
+                                    _emailController.clear();
+                                    _passwordController.clear();
+                                    _emailErrorText = null;
+                                    _formKey.currentState?.reset();
+                                  });
+                                },
+                          child: Text(
+                            _showPasswordInput
+                                ? 'Sign In with PIN'
+                                : 'Sign In with Password',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              color: _isLoading
+                                  ? primaryColor.withValues(alpha: 0.45)
+                                  : null,
+                            ),
+                          ),
+                        ),
+                        _buildSocialLogin(context),
+                        const SizedBox(height: 24),
+                      ],
                     ),
-                    if (_showPasswordInput) ...[
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: inputDecoration.copyWith(hintText: 'Password'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) return 'Please enter your password.';
-                          if (value.length < 6) return 'Password must be at least 6 characters.';
-                          return null;
-                        },
-                        enabled: !_isLoading,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                      ),
-                      TextButton(
-                        onPressed: _isLoading ? null : () {},
-                        child: Text('Forgot Password?', style: TextStyle(color: Colors.blue.shade600, fontSize: 14, fontWeight: FontWeight.w500)),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Sign In Button
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: ElevatedButton(
-                  onPressed: _isLoading
-                      ? null
-                      : () {
-                    if (_showPasswordInput) {
-                      _doLoginWithPassword();
-                    } else {
-                      _verifyEmail();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    elevation: 0,
                   ),
-                  child: _isLoading
-                      ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                      : Text(_showPasswordInput ? 'Sign In' : 'Sign In with Account', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                 ),
               ),
-              const SizedBox(height: 20),
-
-              // Toggle Login Mode
-              TextButton(
-                onPressed: _isLoading
-                    ? null
-                    : () {
-                  setState(() {
-                    _showPasswordInput = !_showPasswordInput;
-                    _emailController.clear();
-                    _passwordController.clear();
-                    _emailErrorText = null;
-                    _formKey.currentState?.reset();
-                  });
-                },
-                child: Text(
-                  _showPasswordInput ? 'Sign In with PIN' : 'Sign In with Password',
-                  style: TextStyle(color: _isLoading ? Colors.blue.shade300 : Colors.blue, fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ),
-
-              // Social Login
-              const SizedBox(height: 30),
-              Text('Or sign in with', style: TextStyle(color: Colors.grey.shade600, fontSize: 15, fontWeight: FontWeight.w500)),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildSocialIconButton(iconPath: 'assets/images/google-logo.png', tooltip: 'Sign in with Google', onPressed: () {}),
-                  _buildSocialIconButton(iconPath: 'assets/images/facebook-logo.png', tooltip: 'Sign in with Facebook', onPressed: () {}),
-                  _buildSocialIconButton(iconPath: 'assets/images/apple-logo.png', tooltip: 'Sign in with Apple', onPressed: () {}),
-                ],
-              ),
-              const SizedBox(height: 40),
-            ],
-          ),
+            );
+          },
         ),
+      ),
+    );
+  }
+}
+
+/// Circular social provider button using [secondaryColor] and theme outline.
+class _SocialIconButton extends StatelessWidget {
+  const _SocialIconButton({
+    required this.iconPath,
+    required this.tooltip,
+    required this.onPressed,
+    required this.isLoading,
+    required this.borderColor,
+  });
+
+  final String iconPath;
+  final String tooltip;
+  final VoidCallback onPressed;
+  final bool isLoading;
+  final Color borderColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: secondaryColor,
+        shape: BoxShape.circle,
+        border: Border.all(color: borderColor, width: 0.8),
+        boxShadow: [
+          BoxShadow(
+            color: borderColor.withValues(alpha: 0.35),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        icon: Image.asset(iconPath, height: 28, width: 28),
+        onPressed: isLoading ? null : onPressed,
+        tooltip: tooltip,
       ),
     );
   }
